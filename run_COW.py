@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import torch
 from diffusers import DDIMInverseScheduler, DDIMScheduler
 import time
@@ -8,19 +9,18 @@ from pipeline_COW import COWPipeline
 from PIL import Image
 import numpy as np
 from torchvision import transforms
-import time
 
 
 def setup_args(parser):
     parser.add_argument(
         "--input_img", type=str, required=False,
         help="Path to input img",
-        default = '/kaggle/working/data/images/0.jpg'
+        default = './data/images/0.jpg'
     )
     parser.add_argument(
         "--input_mask", type=str, required=False,
         help="Path to input mask",
-        default = '/kaggle/working/data/masks/0.jpg'
+        default = './data/masks/0.jpg'
     )
     parser.add_argument(
         "--prompt", type=str, required=False,
@@ -30,7 +30,7 @@ def setup_args(parser):
 
     parser.add_argument(
         "--output_dir", type=str, 
-        default = "/kaggle/working/results",
+        default = "./results",
         help="Output path to the directory with results.",
     )
     parser.add_argument(
@@ -69,11 +69,11 @@ def setup_args(parser):
 if __name__ == "__main__":
     """Example usage:
     python run_COW.py \
-        --input_img /kaggle/working/data/images/0.jpg \
-        --input_mask /kaggle/working/data/masks/0.jpg \
+        --input_img ./data/images/0.jpg \
+        --input_mask ./data/masks/0.jpg \
         --prompt "a person in a forest" \
         --model_path "stabilityai/stable-diffusion-2-1-base" \
-        --output_dir /kaggle/working/results
+        --output_dir ./results
     """
     parser = argparse.ArgumentParser()
     setup_args(parser)
@@ -111,6 +111,7 @@ if __name__ == "__main__":
                     y_offset = args.seed_y_offset,
                     )[0]
     end_time = time.time()
-    image.save(f"{args.output_dir}/{prompt}.jpg")
+    safe_name = re.sub(r'[^\w\-]', '_', prompt)[:100]
+    image.save(f"{args.output_dir}/{safe_name}.jpg")
 
 
