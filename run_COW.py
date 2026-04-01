@@ -1,6 +1,5 @@
 import os
 import sys
-os.environ["CUDA_VISIBLE_DEVICES"] = "5"
 import torch
 from diffusers import DDIMInverseScheduler, DDIMScheduler
 import time
@@ -16,12 +15,12 @@ def setup_args(parser):
     parser.add_argument(
         "--input_img", type=str, required=False,
         help="Path to input img",
-        default = './data/images/0.jpg'
+        default = '/kaggle/working/data/images/0.jpg'
     )
     parser.add_argument(
         "--input_mask", type=str, required=False,
         help="Path to input mask",
-        default = './data/masks/0.jpg'
+        default = '/kaggle/working/data/masks/0.jpg'
     )
     parser.add_argument(
         "--prompt", type=str, required=False,
@@ -31,12 +30,12 @@ def setup_args(parser):
 
     parser.add_argument(
         "--output_dir", type=str, 
-        default = "./results",
+        default = "/kaggle/working/results",
         help="Output path to the directory with results.",
     )
     parser.add_argument(
         "--model_path", type=str, 
-        default = '/home/wry/CODE/COW_diffusers/models/stable-diffusion-2-1-base',
+        default = 'stabilityai/stable-diffusion-2-1-base',
         help="Path to pretrained model.",
     )
     parser.add_argument(
@@ -70,11 +69,11 @@ def setup_args(parser):
 if __name__ == "__main__":
     """Example usage:
     python run_COW.py \
-        --input_img ./data/images/0.jpg \
-        --input_mask ./data/masks/0.jpg \
+        --input_img /kaggle/working/data/images/0.jpg \
+        --input_mask /kaggle/working/data/masks/0.jpg \
         --prompt "a person in a forest" \
-        --model_path "/home/wry/CODE/COW_diffusers/models/stable-diffusion-2-1-base" \
-        --output_dir ./results 
+        --model_path "stabilityai/stable-diffusion-2-1-base" \
+        --output_dir /kaggle/working/results
     """
     parser = argparse.ArgumentParser()
     setup_args(parser)
@@ -87,7 +86,7 @@ if __name__ == "__main__":
     pipeline = pipeline.to(device)
     pipeline.scheduler = DDIMScheduler.from_config(pipeline.scheduler.config)
     pipeline.inverse_scheduler = DDIMInverseScheduler.from_config(pipeline.scheduler.config)
-    generator = torch.Generator("cuda").manual_seed(args.seed)
+    generator = torch.Generator(device).manual_seed(args.seed)
 
 
     face_image = Image.open(args.input_img).convert("RGB")
