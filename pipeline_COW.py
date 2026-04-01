@@ -4,10 +4,28 @@ import torch
 import copy
 from torch.nn import functional as F
 from diffusers.models import AutoencoderKL, UNet2DConditionModel
-from diffusers.utils import deprecate, is_accelerate_available, logging, randn_tensor, replace_example_docstring
+from diffusers.utils import deprecate, logging
+try:
+    from diffusers.utils import is_accelerate_available, randn_tensor, replace_example_docstring
+except ImportError:
+    try:
+        from diffusers.utils.torch_utils import randn_tensor
+    except ImportError:
+        from torch import randn as randn_tensor
+    try:
+        from diffusers.utils import is_accelerate_available
+    except ImportError:
+        is_accelerate_available = lambda: False
+    def replace_example_docstring(*args, **kwargs):
+        def decorator(func):
+            return func
+        return decorator
 from diffusers.pipelines.pipeline_utils import DiffusionPipeline
 from diffusers.pipelines.stable_diffusion import StableDiffusionPipelineOutput
-from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
+try:
+    from diffusers.pipelines.stable_diffusion.safety_checker import StableDiffusionSafetyChecker
+except ImportError:
+    StableDiffusionSafetyChecker = None
 from PIL import Image
 from diffusers.pipelines.stable_diffusion import StableDiffusionPipeline
 import PIL
