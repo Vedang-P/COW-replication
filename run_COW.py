@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
 
 
-    pipeline = COWPipeline.from_pretrained(args.model_path)
+    pipeline = COWPipeline.from_pretrained(args.model_path, token=False)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     pipeline = pipeline.to(device)
     pipeline.scheduler = DDIMScheduler.from_config(pipeline.scheduler.config)
