@@ -81,6 +81,10 @@ if __name__ == "__main__":
 
 
 
+    # Clear any bad/expired HF tokens from environment so anonymous download works
+    for _key in ['HF_TOKEN', 'HUGGINGFACE_HUB_TOKEN', 'HUGGING_FACE_HUB_TOKEN']:
+        os.environ.pop(_key, None)
+
     pipeline = COWPipeline.from_pretrained(args.model_path, token=False)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     pipeline = pipeline.to(device)
